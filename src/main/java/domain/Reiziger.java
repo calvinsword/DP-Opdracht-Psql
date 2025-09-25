@@ -81,6 +81,6 @@ public class Reiziger {
 
     @Override
     public String toString() {
-        return(voorletters + ", " + tussenvoegsel + ", " + achternaam + " heeft een reiziger id van: " + reiziger_id + " en een geboorte datum van: " + geboortedatum + ".");
+        return(voorletters + ", " + tussenvoegsel + ", " + achternaam + " heeft een reiziger id van: " + reiziger_id + " en een geboorte datum van: " + geboortedatum + "." + " en soms een adres: " + adres);
     }
 }
