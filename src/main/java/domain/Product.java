@@ -12,7 +12,7 @@ public class Product {
 
     private int prijs;
 
-    private List<OVChipkaart> alleOVChipkaarten;
+    private List<OVChipkaart> alleOVChipkaarten = new java.util.ArrayList<>();
 
     public Product(int Product_nummer, String Naam, String Beschrijving, int Prijs) {
         this.product_nummer = Product_nummer;
@@ -53,7 +53,10 @@ public class Product {
         return alleOVChipkaarten;
     }
     public void addOVChipkaart(OVChipkaart ovChipkaart) {
-        this.alleOVChipkaarten.add(ovChipkaart);
+        if (!alleOVChipkaarten.contains(ovChipkaart)) {
+            alleOVChipkaarten.add(ovChipkaart);
+            ovChipkaart.addProdcut(this);
+        }
     }
     @Override
     public String toString() {

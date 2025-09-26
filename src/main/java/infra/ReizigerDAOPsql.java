@@ -1,6 +1,9 @@
 package infra;
 
+import data.AdresDAO;
+import data.OVChipkaartDAO;
 import data.ReizigerDAO;
+import domain.OVChipkaart;
 import domain.Reiziger;
 
 import java.sql.*;
@@ -59,9 +62,8 @@ public class ReizigerDAOPsql implements ReizigerDAO {
                         rs.getDate("geboortedatum")
                 );
             }
-            else return  null;
         }
-
+        throw new SQLException();
     }
 
     public List<Reiziger> findByGbdatum(Date date) throws SQLException {

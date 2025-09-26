@@ -10,7 +10,7 @@ public class OVChipkaart {
     private int klasse;
     private long saldo;
     private Reiziger reiziger;
-    private List<Product> alleProdcuten;
+    private List<Product> alleProdcuten = new java.util.ArrayList<>();
 
     public OVChipkaart(int id, Date geldig_tot, int klasse, long saldo, Reiziger reiziger) {
         this.id = id;
@@ -57,7 +57,10 @@ public class OVChipkaart {
         return alleProdcuten;
     }
     public void addProdcut(Product p) {
-        alleProdcuten.add(p);
+        if (!alleProdcuten.contains(p)) {
+            alleProdcuten.add(p);
+            p.addOVChipkaart(this);
+        }
     }
 
     @Override
