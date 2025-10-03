@@ -10,7 +10,7 @@ public class OVChipkaart {
     private int klasse;
     private long saldo;
     private Reiziger reiziger;
-    private List<Product> alleProdcuten = new java.util.ArrayList<>();
+    private List<Product> alleProducten = new java.util.ArrayList<>();
 
     public OVChipkaart(int id, Date geldig_tot, int klasse, long saldo, Reiziger reiziger) {
         this.id = id;
@@ -53,19 +53,28 @@ public class OVChipkaart {
     public void setReiziger(Reiziger reiziger) {
         this.reiziger = reiziger;
     }
-    public List<Product> getAlleProdcuten() {
-        return alleProdcuten;
+    public List<Product> getAlleProducten() {
+        return alleProducten;
     }
-    public void addProdcut(Product p) {
-        if (!alleProdcuten.contains(p)) {
-            alleProdcuten.add(p);
+    public void addProduct(Product p) {
+        if (!alleProducten.contains(p)) {
+            alleProducten.add(p);
             p.addOVChipkaart(this);
         }
     }
 
     @Override
     public String toString() {
-        return ("OVKaart " + id + " is geldig tot " + geldig_tot + " en met klasse " + klasse + " heeft een saldo van €" + saldo + " en in bezit van " + reiziger.getnaam());
+        StringBuilder ovString = new StringBuilder();
+        ovString.append("OVKaart " + id + " is geldig tot " + geldig_tot + " en met klasse " + klasse + " heeft een saldo van €" + saldo + " en in bezit van " + reiziger.getnaam());
+        if (alleProducten != null && !alleProducten.isEmpty()) {
+            ovString.append(" met producten: ");
+            for (Product p : alleProducten) {
+                ovString.append(p.getNaam()).append(" ");
+            }
+        } else {
+            ovString.append(" met geen producten");
+        }
+        return ovString.toString();
     }
-
 }

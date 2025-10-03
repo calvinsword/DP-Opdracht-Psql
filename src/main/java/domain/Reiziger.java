@@ -1,6 +1,7 @@
 package domain;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Reiziger {
@@ -10,7 +11,7 @@ public class Reiziger {
     private String achternaam;
     private Date geboortedatum;
     private Adres adres;
-    private List<OVChipkaart> ovChipkaarten;
+    private List<OVChipkaart> ovChipkaarten =  new ArrayList<>();
 
 
     public Reiziger(int Reiziger_id, String Voorletters, String Tussenvoegsel, String Achternaam, Date Gebortedatum) {
@@ -79,8 +80,37 @@ public class Reiziger {
         this.ovChipkaarten = ovChipkaarten;
     }
 
+    public boolean voegToeOVChipkaart(OVChipkaart ovChipkaart) {
+        if (ovChipkaart != null && !ovChipkaarten.contains(ovChipkaart)) {
+            ovChipkaarten.add(ovChipkaart);
+            ovChipkaart.setReiziger(this);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean verwijderOVChipkaart(OVChipkaart ovChipkaart) {
+        if (ovChipkaart != null && ovChipkaarten.contains(ovChipkaart)) {
+            ovChipkaarten.remove(ovChipkaart);
+            ovChipkaart.setReiziger(null);
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
-        return(voorletters + ", " + tussenvoegsel + ", " + achternaam + " heeft een reiziger id van: " + reiziger_id + " en een geboorte datum van: " + geboortedatum + "." + " adress{" + adres + "}" + " ovChipkaarten{" + ovChipkaarten + "}");
+        StringBuilder str = new StringBuilder();
+        str.append(voorletters + ", " + tussenvoegsel + ", " + achternaam + " heeft een reiziger id van: " + reiziger_id + " en een geboorte datum van: " + geboortedatum + "." + " adress{" + adres + "}" + " ovChipkaarten{" + ovChipkaarten + "}");
+        if (adres != null){
+            str.append(", " + adres);
+        }
+        if (ovChipkaarten != null && !ovChipkaarten.isEmpty()) {
+            str.append(", OVChipkaarten: ");
+            for (OVChipkaart ovChipkaart : ovChipkaarten) {
+                str.append(ovChipkaart.toString()).append("; ");
+            }
+        }
+        return str.toString();
     }
 }

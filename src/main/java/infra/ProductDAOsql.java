@@ -3,6 +3,7 @@ package infra;
 import data.ProductDAO;
 import domain.OVChipkaart;
 import domain.Product;
+import domain.Reiziger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -123,6 +124,7 @@ public class ProductDAOsql implements ProductDAO {
                         p.setNaam(rs1.getString("naam"));
                         p.setBeschrijving(rs1.getString("beschrijving"));
                         p.setPrijs(rs1.getInt("prijs"));
+                        p.addOVChipkaart(ov);
                         producten.add(p);
                     }
                 }
@@ -144,8 +146,47 @@ public class ProductDAOsql implements ProductDAO {
                     rs.getString("naam"),
                     rs.getString("beschrijving"),
                     rs.getInt("prijs"));
+
+            PreparedStatement ps1 = con.prepareStatement(
+                    "SELECT ov.* FROM ov_chipkaart ov " +
+                            "INNER JOIN ov_chipkaart_product ocp ON ov.kaart_nummer = ocp.kaart_nummer " +
+                            "WHERE ocp.product_nummer = ?"
+            );
+            ps1.setInt(1, product.getProduct_nummer());
+            ResultSet rs1 = ps1.executeQuery();
+            while (rs1.next()) {
+                OVChipkaart ov = new OVChipkaart(
+                        rs1.getInt("kaart_nummer"),
+                        rs1.getDate("geldig_tot"),
+                        rs1.getInt("klasse"),
+                        rs1.getLong("saldo"),
+                        null
+                );
+                PreparedStatement ps2 = con.prepareStatement("SELECT * FROM reiziger WHERE reiziger_id = ?");
+                ps2.setInt(1, rs1.getInt("reiziger_id"));
+                ResultSet rs2 = ps2.executeQuery();
+                if (rs2.next()) {
+                    ov.setReiziger(new Reiziger(
+                            rs2.getInt("reiziger_id"),
+                            rs2.getString("voorletters"),
+                            rs2.getString("tussenvoegsel"),
+                            rs2.getString("achternaam"),
+                            rs2.getDate("geboortedatum")
+                    ));
+                }
+                rs2.close();
+                ps2.close();
+                product.addOVChipkaart(ov);
+        }
+            rs1.close();
+            ps1.close();
             producten.add(product);
         }
+        rs.close();
+        ps.close();
+
+
+
         return producten;
     }
 

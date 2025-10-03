@@ -55,11 +55,19 @@ public class Product {
     public void addOVChipkaart(OVChipkaart ovChipkaart) {
         if (!alleOVChipkaarten.contains(ovChipkaart)) {
             alleOVChipkaarten.add(ovChipkaart);
-            ovChipkaart.addProdcut(this);
+            ovChipkaart.addProduct(this);
         }
     }
     @Override
     public String toString() {
-        return ("Product " + product_nummer + " met naam " + naam + " heeft beschrijving " + beschrijving + " en een prijs van " + prijs);
+        StringBuilder productString = new StringBuilder();
+        productString.append("Product " + product_nummer + " met naam " + naam + " heeft beschrijving " + beschrijving + " en een prijs van " + prijs);
+        if (alleOVChipkaarten != null && !alleOVChipkaarten.isEmpty()) {
+            productString.append(" en is gekoppeld aan OVChipkaarten: ");
+            for (OVChipkaart ovChipkaart : alleOVChipkaarten) {
+                productString.append(ovChipkaart.getId()).append(" ");
+            }
+        }
+        return productString.toString();
     }
 }

@@ -32,8 +32,8 @@ public class OVChipkaartDAOsql implements OVChipkaartDAO {
         ps.executeUpdate();
 
         //KOPPEL TABEL OV_CHIPKAART_PRODUCT
-        if (ov.getAlleProdcuten() != null) {
-            for (Product p : ov.getAlleProdcuten()) {
+        if (ov.getAlleProducten() != null) {
+            for (Product p : ov.getAlleProducten()) {
                 PreparedStatement psLink = con.prepareStatement(
                         "INSERT INTO ov_chipkaart_product(kaart_nummer, product_nummer,status,last_update) VALUES (?, ?, ?, ?)"
                 );
@@ -67,8 +67,8 @@ public class OVChipkaartDAOsql implements OVChipkaartDAO {
         psDel.executeUpdate();
 
         //NIEUWE KOPPELINGEN TOEVOEGEN
-        if (ov.getAlleProdcuten() != null) {
-            for (Product p : ov.getAlleProdcuten()) {
+        if (ov.getAlleProducten() != null) {
+            for (Product p : ov.getAlleProducten()) {
                 PreparedStatement psLink = con.prepareStatement(
                         "INSERT INTO ov_chipkaart_product(kaart_nummer, product_nummer,status,last_update) VALUES (?, ?, ?, ?)"
                 );
@@ -112,14 +112,36 @@ public class OVChipkaartDAOsql implements OVChipkaartDAO {
                         rs.getDate("geldig_tot"),
                         rs.getInt("klasse"),
                         rs.getLong("saldo"),
-                        new Reiziger(rs.getInt("reiziger_id"), rs.getString("voorletters"),rs.getString("tussenvoegsel"),rs.getString("achternaam"),rs.getDate("geboortedatum"))
+                        reiziger
                 );
                 allOVChipkaarten.add(ov);
+            }
+            for (OVChipkaart ov : allOVChipkaarten) {
+                PreparedStatement ps2 = con.prepareStatement(
+                        "SELECT * FROM product " +
+                                "INNER JOIN ov_chipkaart_product " +
+                                "ON product.product_nummer = ov_chipkaart_product.product_nummer " +
+                                "WHERE ov_chipkaart_product.kaart_nummer = ?"
+                );
+                ps2.setInt(1, ov.getId());
+                try (ResultSet rs2 = ps2.executeQuery()) {
+                    while (rs2.next()) {
+                        Product p = new Product(
+                                rs2.getInt("product_nummer"),
+                                rs2.getString("naam"),
+                                rs2.getString("beschrijving"),
+                                rs2.getInt("prijs")
+                        );
+                        ov.addProduct(p);
+                    }
+                }
             }
         }
         return  allOVChipkaarten;
     }
-
+    //Ik heb vele manieren geprobeerd om de reiziger mee te geven zonder een "new Reiziger" te moeten doen
+    //Maar ik kreeg het niet voor elkaar.
+    //Ik hoop dat ik dit zo mag doen.
     public List<OVChipkaart> findAll() throws SQLException {
         List<OVChipkaart> allOVChipkaarten = new ArrayList<>();
         String query = "SELECT * FROM ov_chipkaart INNER JOIN reiziger ON reiziger.reiziger_id = ov_chipkaart.reiziger_id";
@@ -131,6 +153,7 @@ public class OVChipkaartDAOsql implements OVChipkaartDAO {
                         rs.getDate("geldig_tot"),
                         rs.getInt("klasse"),
                         rs.getLong("saldo"),
+
                         new Reiziger(rs.getInt("reiziger_id"), rs.getString("voorletters"),rs.getString("tussenvoegsel"),rs.getString("achternaam"),rs.getDate("geboortedatum"))
                 );
                 allOVChipkaarten.add(ov);

@@ -53,6 +53,7 @@ public class Adres {
         this.woonplaat = woonplaat;
     }
     public Reiziger getReiziger() {
+
         return reiziger;
     }
 
